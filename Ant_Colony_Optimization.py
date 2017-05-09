@@ -5,6 +5,7 @@ import numpy as np
 from random import random, randint
 from Ant_Grid import AntGrid
 from Ant_Graph import AntGraph
+from Ant import Ant
 
 def Dijkstra(graph):
     node_start = graph.node_index(graph.start)
@@ -93,8 +94,22 @@ def ACO():
     '''
 
 if __name__ == '__main__':
-    myMap = AntGrid('./Dataset/P2ds0.txt')
+    myMap = AntGrid('./Dataset/P3ds0.txt')
     myMap.info()
     myGraph = AntGraph(myMap)
     myGraph.adj_info()
+    myGraph.reset_tau()
     Dijkstra(myGraph)
+
+
+    num_ants = 1
+    num_repetitions = 1 #times for running ACO algorithm
+    num_iterations = 3
+    best_path_vec = None
+    best_path_cost = sys.maxint
+
+    #for i in range(0, num_repetitions):
+    testAnt0 = Ant(myGraph, 0)
+    testAnt1 = Ant(myGraph, 1)
+    testAnt0.run()
+    testAnt1.run()
