@@ -6,6 +6,7 @@ from random import random, randint
 from Ant_Grid import AntGrid
 from Ant_Graph import AntGraph
 from Ant import Ant
+from Ant_Colony import AntColony
 
 def Dijkstra(graph):
     node_start = graph.node_index(graph.start)
@@ -102,14 +103,12 @@ if __name__ == '__main__':
     Dijkstra(myGraph)
 
 
-    num_ants = 1
-    num_repetitions = 1 #times for running ACO algorithm
+    num_ants = 3
     num_iterations = 3
+    num_repetitions = 1 #times for running ACO algorithm
     best_path_vec = None
     best_path_cost = sys.maxint
 
     #for i in range(0, num_repetitions):
-    testAnt0 = Ant(myGraph, 0)
-    testAnt1 = Ant(myGraph, 1)
-    testAnt0.run()
-    testAnt1.run()
+    myAntColony = AntColony(myGraph, num_ants, num_iterations)
+    myAntColony.ants_run()

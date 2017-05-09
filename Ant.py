@@ -4,26 +4,27 @@ from random import random, shuffle
 from threading import *
 
 class Ant(Thread): #inherit Thread class
-    def __init__(self, graph, ID):
+    def __init__(self, ID, colony):
         Thread.__init__(self)
-        self.graph = graph
         self.ID = ID
-        self.node_start = graph.node_index(graph.start)
-        self.node_end = graph.node_index(graph.end)
+        self.colony = colony
+        #self.graph = colony.graph
+        self.node_start = colony.graph.node_index(colony.graph.start)
+        self.node_end = colony.graph.node_index(colony.graph.end)
 
         self.node_curr = self.node_start
         self.path = [self.node_start]
         self.path_cost = 0
 
-        self.nodes_to_visit = [0 for i in range(0, graph.num_nodes)]
+        self.nodes_to_visit = [0 for i in range(0, colony.graph.num_nodes)]
         self.nodes_to_visit[self.node_start] = 1
 
         self.q0 = 0.5
 
     #override run in Thread
     def run(self):
-        graph = self.graph
-        count = 0
+        graph = self.colony.graph
+
         while not self.end():
             # we need exclusive access to the graph
             graph.lock.acquire()
@@ -37,22 +38,21 @@ class Ant(Thread): #inherit Thread class
             self.node_curr = node_next
 
             graph.lock.release()
-            count+=1
 
-        #send our results to the colony
+        #send our results back to the colony
         #self.colony.update(self)
-        print "Ant thread %s terminating." % (self.ID,)
-        print "Path: " + str(self.path)
+        self.update()
+
 
         #allow threads to be restarted (calls Thread.__init__)
-        self.__init__(self.graph, self.ID)
+        #self.__init__(ID=self.ID, colony=self.colony)
 
     def end(self):
         return (self.node_curr == self.node_end)
 
     #determine next node after current node
     def state_transition_rule(self, node_curr):
-        graph = self.graph
+        graph = self.colony.graph
         q = random()
         alpha = 1
         beta = 2
@@ -99,7 +99,21 @@ class Ant(Thread): #inherit Thread class
 
     #update pheromone when going through edges
     def local_updating_rule(self, node_curr, node_next):
-        rho = 0.5
-        graph = self.graph
+        rho = self.colony.rho
+        graph = self.colony.graph
         val = (1 - rho) * graph.tau(node_curr, node_next) + (rho * graph.tau0)
         graph.update_tau(node_curr, node_next, val)
+
+    def update(self):
+        lock = Lock()
+        lock.acquire()
+        print "Ant thread " + str(self.ID) + " terminating." + " Path: " + str(self.path) + "\n"
+
+        self.colony.ants_counter+=1
+
+        if self.colony.ants_counter == len(self.colony.ants):
+            self.colony.cv.acquire()
+            self.colony.cv.notify()
+            self.colony.cv.release()
+
+        lock.release()

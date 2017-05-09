@@ -59,6 +59,10 @@ class AntGraph:
         print "Adjacency Matrix:"
         print np.array(self.adj_mat)
 
+    def tau_info(self):
+        print "Tau Matrix:"
+        print np.array(self.tau_mat)
+
     def node_index(self, xy_coordinate):
         return xy_coordinate[0]*self.size + xy_coordinate[1]
 
