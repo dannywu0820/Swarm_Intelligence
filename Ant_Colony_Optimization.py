@@ -58,41 +58,7 @@ def Dijkstra(graph):
         prev_index = prev[prev_index]
     path.append(curr_index)
     path = list(reversed(path))
-    print "Shortest Path from Start to End: " + str(path) + " Length: " + str(dist[node_end])
-
-def ACO():
-    '''
-    #initialization
-    #1.transform grid into graph
-    #2.num_ants
-    #3.tau
-    #4.lau = 0.8 or 0.9
-    #5.alpha = 0.5, beta = 0.5
-
-    iterations = 100
-    time = 0
-    while(time < iterations){
-        #one or multiple ants find their solution path from start point to end point
-        #use transition probability
-        unvisited_nearby_nodes = []
-        numerator = (tau[i][j] ^ alpha) * (1/adjacency[i][j] ^ beta)
-        denominator = sum(numerator in unvisited_nearby_nodes)
-        if(unvisited and nearby)
-            probability_of_node = numerator/denominator
-        else
-            probability_of_node = 0
-        choose the node that its probability_of_node is closest to random()
-
-        #update pheromone on graph
-        #use evaporation mechanism
-        Q = 1 or 100
-        delta = Q/path_length
-        tau[i][j] = (1-lau) * tau[i][j] + delta[i][j]
-
-        #update best path among all solution path
-        time = time+1
-    }
-    '''
+    print "Shortest Path from Start to End: " + str(path) + " Cost: " + str(dist[node_end])
 
 if __name__ == '__main__':
     myMap = AntGrid('./Dataset/P3ds0.txt')
@@ -102,9 +68,8 @@ if __name__ == '__main__':
     myGraph.reset_tau()
     Dijkstra(myGraph)
 
-
-    num_ants = 3
-    num_iterations = 3
+    num_ants = 10
+    num_iterations = 30
     num_repetitions = 1 #times for running ACO algorithm
     best_path_vec = None
     best_path_cost = sys.maxint

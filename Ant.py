@@ -8,7 +8,7 @@ class Ant(Thread): #inherit Thread class
         Thread.__init__(self)
         self.ID = ID
         self.colony = colony
-        #self.graph = colony.graph
+        self.graph = self.colony.graph
         self.node_start = colony.graph.node_index(colony.graph.start)
         self.node_end = colony.graph.node_index(colony.graph.end)
 
@@ -21,7 +21,7 @@ class Ant(Thread): #inherit Thread class
 
         self.q0 = 0.5
 
-    #override run in Thread
+    #override run method in Thread
     def run(self):
         graph = self.colony.graph
 
@@ -40,9 +40,7 @@ class Ant(Thread): #inherit Thread class
             graph.lock.release()
 
         #send our results back to the colony
-        #self.colony.update(self)
         self.update()
-
 
         #allow threads to be restarted (calls Thread.__init__)
         #self.__init__(ID=self.ID, colony=self.colony)
@@ -96,20 +94,25 @@ class Ant(Thread): #inherit Thread class
 
         return node_next
 
-
     #update pheromone when going through edges
     def local_updating_rule(self, node_curr, node_next):
         rho = self.colony.rho
         graph = self.colony.graph
         val = (1 - rho) * graph.tau(node_curr, node_next) + (rho * graph.tau0)
         graph.update_tau(node_curr, node_next, val)
+        graph.update_tau(node_next, node_curr, val)
 
     def update(self):
         lock = Lock()
         lock.acquire()
-        print "Ant thread " + str(self.ID) + " terminating." + " Path: " + str(self.path) + "\n"
+        #print "Ant thread " + str(self.ID) + " terminating." + " Path: " + str(self.path) + " Cost: " + str(self.path_cost) + "\n"
+        print "Ant thread " + str(self.ID) + " terminating." + " Cost: " + str(self.path_cost) + "\n"
 
         self.colony.ants_counter+=1
+
+        if self.colony.best_path_cost > self.path_cost:
+            self.colony.best_path_cost = self.path_cost
+            self.colony.best_path = self.path
 
         if self.colony.ants_counter == len(self.colony.ants):
             self.colony.cv.acquire()

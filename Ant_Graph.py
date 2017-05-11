@@ -3,7 +3,6 @@ import numpy as np
 from threading import Lock
 from Ant_Grid import AntGrid
 
-
 class AntGraph:
     def __init__(self, antgrid):
         self.start = antgrid.start

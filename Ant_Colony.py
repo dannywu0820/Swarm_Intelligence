@@ -11,6 +11,10 @@ class AntColony:
         self.ants_counter = 0
         self.iter_counter = 0
 
+        self.best_path_cost = sys.maxint
+        self.best_path = []
+        self.best_path_change = []
+
         self.cv = Condition() #condition variable object in threading
         self.rho = 0.5 #evaporation coefficient
 
@@ -23,10 +27,15 @@ class AntColony:
             self.cv.acquire()
             #in each iteration, wait until the last ant calls notify() so that updates can happen
             self.cv.wait()
-            #self.global_updating_rule()
+            self.global_updating_rule()
+            self.best_path_change.append(self.best_path_cost)
             self.cv.release()
             for ant in self.ants:
                 ant.__init__(ID=ant.ID, colony=ant.colony)
+
+        print str(self.best_path) + " " + str(self.best_path_cost)
+        self.graph.tau_info()
+        print self.best_path_change
 
     def create_ants(self):
         ants = []
@@ -46,16 +55,10 @@ class AntColony:
         pheromone_evap = 0 #evaporation
         pheromone_depo = 0 #deposition
 
-    def update(self, ant):
-        lock = Lock()
-        lock.acquire()
-        print "Ant thread " + str(ant.ID) + " terminating." + " Path: " + str(ant.path)
-
-        self.ants_counter+=1
-
-        if self.ants_counter == len(self.ants):
-            self.cv.acquire()
-            self.cv.notify()
-            self.cv.release()
-
-        lock.release()
+        for i in range(0, len(self.best_path)-1):
+            node_curr = self.best_path[i]
+            node_next = self.best_path[i+1]
+            pheromone_evap = (1 - self.rho) * self.graph.tau(node_curr, node_next)
+            pheromone_depo = self.rho * (100/self.best_path_cost)
+            self.graph.update_tau(node_curr, node_next, pheromone_evap + pheromone_depo)
+            self.graph.update_tau(node_next, node_curr, pheromone_evap + pheromone_depo)
