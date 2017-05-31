@@ -19,7 +19,7 @@ class Ant(Thread): #inherit Thread class
         self.nodes_to_visit = [0 for i in range(0, colony.graph.num_nodes)]
         self.nodes_to_visit[self.node_start] = 1
 
-        self.q0 = 0.5
+        self.q0 = 0.3
 
     #override run method in Thread
     def run(self):
@@ -106,7 +106,7 @@ class Ant(Thread): #inherit Thread class
         lock = Lock()
         lock.acquire()
         #print "Ant thread " + str(self.ID) + " terminating." + " Path: " + str(self.path) + " Cost: " + str(self.path_cost) + "\n"
-        print "Ant thread " + str(self.ID) + " terminating." + " Cost: " + str(self.path_cost) + "\n"
+        #print "Ant thread " + str(self.ID) + " terminating." + " Cost: " + str(self.path_cost) + "\n"
 
         self.colony.ants_counter+=1
 

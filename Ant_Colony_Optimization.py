@@ -1,3 +1,4 @@
+#Reference: https://github.com/trevlovett/Python-Ant-Colony-TSP-Solver
 import sys
 import matplotlib
 import matplotlib.pyplot as plt
@@ -69,7 +70,7 @@ if __name__ == '__main__':
     Dijkstra(myGraph)
 
     num_ants = 10
-    num_iterations = 30
+    num_iterations = 10
     num_repetitions = 1 #times for running ACO algorithm
     best_path_vec = None
     best_path_cost = sys.maxint

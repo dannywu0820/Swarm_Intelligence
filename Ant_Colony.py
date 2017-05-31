@@ -33,8 +33,8 @@ class AntColony:
             for ant in self.ants:
                 ant.__init__(ID=ant.ID, colony=ant.colony)
 
-        print str(self.best_path) + " " + str(self.best_path_cost)
-        self.graph.tau_info()
+        #self.graph.tau_info()
+        print "Path: " + str(self.best_path) + " Cost: " + str(self.best_path_cost)
         print self.best_path_change
 
     def create_ants(self):
